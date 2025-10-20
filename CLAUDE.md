@@ -63,6 +63,9 @@ This is a Spring Boot REST API application with a layered architecture focused o
 **Controllers:**
 - `PointController` - REST API endpoints for point operations at `/point`
 
+**Services:**
+- `PointService` - Business logic layer for point operations (currently empty, needs implementation)
+
 **Domain Models (Java Records):**
 - `UserPoint` - User point balance and update timestamp
 - `PointHistory` - Point transaction history record
