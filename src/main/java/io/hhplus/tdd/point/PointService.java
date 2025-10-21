@@ -7,6 +7,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class PointService {
 
-    private PointHistoryTable pointHistoryRepository;
-    private UserPointTable userPointRepository;
+    private final UserPointTable userPointRepository;
+
+    public PointService(UserPointTable userPointRepository) {
+        this.userPointRepository = userPointRepository;
+    }
+
+    UserPoint charge(long id,  long amount) {
+        UserPoint userPoint = userPointRepository.selectById(id);
+
+        userPoint = userPointRepository.insertOrUpdate(id, userPoint.point() + amount);
+
+        return userPoint;
+    }
 }
