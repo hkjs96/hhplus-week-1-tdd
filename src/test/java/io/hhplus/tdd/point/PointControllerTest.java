@@ -19,16 +19,25 @@ class PointControllerTest {
 
     @Test
     void 포인트_충전_API_호출() {
-        // Given
         when(pointService.charge(1L, 1000L))
                 .thenReturn(new UserPoint(1L, 1000L, System.currentTimeMillis()));
 
-        // When
         UserPoint result = pointController.charge(1L, 1000L);
 
-        // Then
         assertEquals(1L, result.id());
         assertEquals(1000L, result.point());
         verify(pointService).charge(1L, 1000L);
+    }
+
+    @Test
+    void 특정사용자의_포인트_조회() {
+        when(pointService.point(1L))
+                .thenReturn(new UserPoint(1L, 1000L, System.currentTimeMillis()));
+
+        UserPoint userPoint = pointController.point(1L);
+
+        assertEquals(1L, userPoint.id());
+        assertEquals(1_000L, userPoint.point());
+        verify(pointService).point(1L);
     }
 }
