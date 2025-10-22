@@ -66,6 +66,15 @@ class PointServiceTest {
         // Then - 검증
         assertEquals(1L, userPoint.id());
         assertEquals(700L, userPoint.point()); // 1000 - 300 = 700
+
+        pointService.charge(2L, 2000L);
+
+        // When - 포인트 사용
+        UserPoint userPoint2 = pointService.use(2L, 500L);
+
+        // Then - 검증
+        assertEquals(2L, userPoint2.id());
+        assertEquals(1_500L, userPoint2.point()); // 2000 - 500 = 1500
     }
 
 }
