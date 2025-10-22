@@ -47,48 +47,23 @@ class PointControllerTest {
         verify(pointService).point(userId);
     }
 
-    @Test
-    void 특정사용자_포인트_사용_케이스1() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, 300, 700",      // userId, 사용포인트, 남은포인트
+            "2, 500, 1500",
+            "3, 1000, 4000"
+    })
+    void 특정사용자_포인트_사용(long userId, long useAmount, long remainingPoint) {
         // Given
-        when(pointService.use(1L, 300L))
-                .thenReturn(new UserPoint(1L, 700L, System.currentTimeMillis()));
+        when(pointService.use(userId, useAmount))
+                .thenReturn(new UserPoint(userId, remainingPoint, System.currentTimeMillis()));
 
         // When
-        UserPoint result = pointController.use(1L, 300L);
+        UserPoint result = pointController.use(userId, useAmount);
 
         // Then
-        assertEquals(1L, result.id());
-        assertEquals(700L, result.point());
-        verify(pointService).use(1L, 300L);
-    }
-
-    @Test
-    void 특정사용자_포인트_사용_케이스2() {
-        // Given
-        when(pointService.use(2L, 500L))
-                .thenReturn(new UserPoint(2L, 1500L, System.currentTimeMillis()));
-
-        // When
-        UserPoint result = pointController.use(2L, 500L);
-
-        // Then
-        assertEquals(2L, result.id());
-        assertEquals(1500L, result.point());
-        verify(pointService).use(2L, 500L);
-    }
-
-    @Test
-    void 특정사용자_포인트_사용_케이스3() {
-        // Given
-        when(pointService.use(3L, 1000L))
-                .thenReturn(new UserPoint(3L, 4000L, System.currentTimeMillis()));
-
-        // When
-        UserPoint result = pointController.use(3L, 1000L);
-
-        // Then
-        assertEquals(3L, result.id());
-        assertEquals(4000L, result.point());
-        verify(pointService).use(3L, 1000L);
+        assertEquals(userId, result.id());
+        assertEquals(remainingPoint, result.point());
+        verify(pointService).use(userId, useAmount);
     }
 }
