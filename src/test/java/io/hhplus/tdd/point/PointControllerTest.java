@@ -48,10 +48,47 @@ class PointControllerTest {
     }
 
     @Test
-    void 특정사용자_포인트_사용() {
-        pointController.use(사용자_ID, 사용할_포인트);
+    void 특정사용자_포인트_사용_케이스1() {
+        // Given
+        when(pointService.use(1L, 300L))
+                .thenReturn(new UserPoint(1L, 700L, System.currentTimeMillis()));
 
-        assertEquals(기대값_ID, 사용자_ID);
-        assertEquals(기대값_남은_포인트, 남은_포인트);
+        // When
+        UserPoint result = pointController.use(1L, 300L);
+
+        // Then
+        assertEquals(1L, result.id());
+        assertEquals(700L, result.point());
+        verify(pointService).use(1L, 300L);
+    }
+
+    @Test
+    void 특정사용자_포인트_사용_케이스2() {
+        // Given
+        when(pointService.use(2L, 500L))
+                .thenReturn(new UserPoint(2L, 1500L, System.currentTimeMillis()));
+
+        // When
+        UserPoint result = pointController.use(2L, 500L);
+
+        // Then
+        assertEquals(2L, result.id());
+        assertEquals(1500L, result.point());
+        verify(pointService).use(2L, 500L);
+    }
+
+    @Test
+    void 특정사용자_포인트_사용_케이스3() {
+        // Given
+        when(pointService.use(3L, 1000L))
+                .thenReturn(new UserPoint(3L, 4000L, System.currentTimeMillis()));
+
+        // When
+        UserPoint result = pointController.use(3L, 1000L);
+
+        // Then
+        assertEquals(3L, result.id());
+        assertEquals(4000L, result.point());
+        verify(pointService).use(3L, 1000L);
     }
 }
