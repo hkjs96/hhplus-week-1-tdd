@@ -19,4 +19,8 @@ public class PointService {
 
         return userPoint;
     }
+
+    UserPoint point(long id) {
+        return userPointRepository.selectById(id);
+    }
 }
