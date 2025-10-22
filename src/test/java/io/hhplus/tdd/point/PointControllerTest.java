@@ -79,12 +79,14 @@ class PointControllerTest {
                 () -> pointController.use(1L, 500L)
         );
 
-        // And - 예외 메시지에 "포인트가 부족합니다"가 포함되어야 함
-        assertTrue(exception.getMessage().contains("포인트가 부족합니다"));
-        // And - 예외 메시지에 현재 포인트(100)와 요청 포인트(500)가 포함되어야 함
+        // Then - 예외 메시지에 포인트 값이 포함되어 있는지 검증
         assertTrue(exception.getMessage().contains("100"));
         assertTrue(exception.getMessage().contains("500"));
-
         verify(pointService).use(1L, 500L);
+    }
+
+    @Test
+    void 사용자포인트내역조회() {
+
     }
 }

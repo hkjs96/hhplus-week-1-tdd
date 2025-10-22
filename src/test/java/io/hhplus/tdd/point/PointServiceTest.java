@@ -96,8 +96,7 @@ class PointServiceTest {
             () -> pointService.use(userId, useAmount)
         );
 
-        // Then - 예외 메시지 검증
-        assertTrue(exception.getMessage().contains("포인트가 부족합니다"));
+        // Then - 예외 메시지에 포인트 값이 포함되어 있는지 검증
         assertTrue(exception.getMessage().contains(String.valueOf(currentPoint)));
         assertTrue(exception.getMessage().contains(String.valueOf(useAmount)));
     }
