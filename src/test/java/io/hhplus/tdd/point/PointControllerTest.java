@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -88,19 +90,31 @@ class PointControllerTest {
     @Test
     void 사용자포인트내역조회() {
         // Given - 사용자 1번의 포인트 충전/사용 내역 데이터를 준비함
-        // - 1000 포인트 충전 내역
-        // - 300 포인트 사용 내역
-        // - 500 포인트 충전 내역
-        // 총 3개의 거래 내역을 Mock으로 준비
+        long userId = 1L;
+        List<PointHistory> mockHistories = List.of(
+                new PointHistory(1L, userId, 1000L, TransactionType.CHARGE, System.currentTimeMillis()),
+                new PointHistory(2L, userId, 300L, TransactionType.USE, System.currentTimeMillis()),
+                new PointHistory(3L, userId, 500L, TransactionType.CHARGE, System.currentTimeMillis())
+        );
+        when(pointService.history(userId)).thenReturn(mockHistories);
 
         // When - 사용자 1번의 포인트 내역을 조회함
-        // List<PointHistory> histories = pointController.history(사용자_ID);
+        List<PointHistory> histories = pointController.history(userId);
 
         // Then - 조회된 내역이 존재해야 함 (null이 아님)
+        assertNotNull(histories);
         // And - 총 3개의 거래 내역이 존재해야 함
+        assertEquals(3, histories.size());
         // And - 첫 번째 내역은 1000 포인트 충전(CHARGE)이어야 함
+        assertEquals(1000L, histories.get(0).amount());
+        assertEquals(TransactionType.CHARGE, histories.get(0).type());
         // And - 두 번째 내역은 300 포인트 사용(USE)이어야 함
+        assertEquals(300L, histories.get(1).amount());
+        assertEquals(TransactionType.USE, histories.get(1).type());
         // And - 세 번째 내역은 500 포인트 충전(CHARGE)이어야 함
+        assertEquals(500L, histories.get(2).amount());
+        assertEquals(TransactionType.CHARGE, histories.get(2).type());
         // And - pointService.history()가 호출되었는지 검증
+        verify(pointService).history(userId);
     }
 }
