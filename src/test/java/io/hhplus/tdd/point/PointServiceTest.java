@@ -1,5 +1,6 @@
 package io.hhplus.tdd.point;
 
+import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,13 +13,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PointServiceTest {
 
-    private UserPointTable userPointTable;
+    private UserPointTable userPointRepository;
+    private PointHistoryTable pointHistoryRepository;
     private PointService pointService;
 
     @BeforeEach
     void setUp() {
-        userPointTable = new UserPointTable();
-        pointService = new PointService(userPointTable);
+        userPointRepository = new UserPointTable();
+        pointHistoryRepository = new PointHistoryTable();
+        pointService = new PointService(userPointRepository, pointHistoryRepository);
     }
 
     @Test
