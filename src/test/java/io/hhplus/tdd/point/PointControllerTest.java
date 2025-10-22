@@ -2,6 +2,8 @@ package io.hhplus.tdd.point;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,15 +31,19 @@ class PointControllerTest {
         verify(pointService).charge(1L, 1000L);
     }
 
-    @Test
-    void 특정사용자의_포인트_조회() {
-        when(pointService.point(1L))
-                .thenReturn(new UserPoint(1L, 1000L, System.currentTimeMillis()));
+    @ParameterizedTest
+    @CsvSource({
+            "1, 1000",
+            "2, 13333000"
+    })
+    void 특정사용자의_포인트_조회(long userId, long expectedPoint) {
+        when(pointService.point(userId))
+                .thenReturn(new UserPoint(userId, expectedPoint, System.currentTimeMillis()));
 
-        UserPoint userPoint = pointController.point(1L);
+        UserPoint userPoint = pointController.point(userId);
 
-        assertEquals(1L, userPoint.id());
-        assertEquals(1_000L, userPoint.point());
-        verify(pointService).point(1L);
+        assertEquals(userId, userPoint.id());
+        assertEquals(expectedPoint, userPoint.point());
+        verify(pointService).point(userId);
     }
 }
