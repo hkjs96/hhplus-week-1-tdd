@@ -2,7 +2,10 @@ package io.hhplus.tdd.point;
 
 import io.hhplus.tdd.database.UserPointTable;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,28 +38,30 @@ class PointServiceTest {
         assertEquals(1500L, userPoint.point());
     }
 
-    @Test
-    void 특정사용자_포인트_정보_조회() {
+    @ParameterizedTest
+    @CsvSource({
+            "1, 2000",
+            "2, 500",
+            "3, 3000"
+    })
+    void 특정사용자_포인트_정보_조회(long userId, long chargeAmount) {
         // Given - 테스트 데이터 준비
-        pointService.charge(1L, 2000L);
-        pointService.charge(2L, 500L);
-        pointService.charge(3L, 3000L);
+        pointService.charge(userId, chargeAmount);
 
-        // When & Then - 사용자 1 포인트 조회
-        UserPoint userPoint = pointService.point(1L);
-        assertEquals(1L, userPoint.id());
-        assertEquals(2_000L, userPoint.point());
+        // When - 포인트 조회
+        UserPoint userPoint = pointService.point(userId);
 
-        // When & Then - 사용자 2 포인트 조회
-        UserPoint userPoint2 = pointService.point(2L);
-        assertEquals(2L, userPoint2.id());
-        assertEquals(500L, userPoint2.point());
-
-        // When & Then - 사용자 3 포인트 조회
-        UserPoint userPoint3 = pointService.point(3L);
-        assertEquals(3L, userPoint3.id());
-        assertEquals(3_000L, userPoint3.point());
+        // Then - 검증
+        assertEquals(userId, userPoint.id());
+        assertEquals(chargeAmount, userPoint.point());
     }
 
+    @Test
+    @Disabled
+    void 특정사용자의_포인트사용() {
+//        UserPoint userPoint = pointService.use();
+
+//        assertEquals();
+    }
 
 }
