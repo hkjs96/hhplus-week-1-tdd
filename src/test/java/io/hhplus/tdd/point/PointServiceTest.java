@@ -2,7 +2,6 @@ package io.hhplus.tdd.point;
 
 import io.hhplus.tdd.database.UserPointTable;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -57,11 +56,16 @@ class PointServiceTest {
     }
 
     @Test
-    @Disabled
     void 특정사용자의_포인트사용() {
-//        UserPoint userPoint = pointService.use();
+        // Given - 사용자에게 포인트 충전
+        pointService.charge(1L, 1000L);
 
-//        assertEquals();
+        // When - 포인트 사용
+        UserPoint userPoint = pointService.use(1L, 300L);
+
+        // Then - 검증
+        assertEquals(1L, userPoint.id());
+        assertEquals(700L, userPoint.point()); // 1000 - 300 = 700
     }
 
 }
