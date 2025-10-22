@@ -37,9 +37,26 @@ class PointServiceTest {
 
     @Test
     void 특정사용자_포인트_정보_조회() {
-        UserPoint userPoint = pointService.point(1L);
+        // Given - 테스트 데이터 준비
+        pointService.charge(1L, 2000L);
+        pointService.charge(2L, 500L);
+        pointService.charge(3L, 3000L);
 
+        // When & Then - 사용자 1 포인트 조회
+        UserPoint userPoint = pointService.point(1L);
         assertEquals(1L, userPoint.id());
         assertEquals(2_000L, userPoint.point());
+
+        // When & Then - 사용자 2 포인트 조회
+        UserPoint userPoint2 = pointService.point(2L);
+        assertEquals(2L, userPoint2.id());
+        assertEquals(500L, userPoint2.point());
+
+        // When & Then - 사용자 3 포인트 조회
+        UserPoint userPoint3 = pointService.point(3L);
+        assertEquals(3L, userPoint3.id());
+        assertEquals(3_000L, userPoint3.point());
     }
+
+
 }
