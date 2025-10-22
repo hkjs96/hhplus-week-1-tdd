@@ -3,6 +3,8 @@ package io.hhplus.tdd.point;
 import io.hhplus.tdd.database.UserPointTable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PointService {
 
@@ -34,5 +36,9 @@ public class PointService {
         UserPoint updatedUserPoint = userPointRepository.insertOrUpdate(id, userPoint.point() - amount);
 
         return updatedUserPoint;
+    }
+
+    List<PointHistory> history(long id) {
+        return pointHistoryRepository.selectAllByUserId(id);
     }
 }
