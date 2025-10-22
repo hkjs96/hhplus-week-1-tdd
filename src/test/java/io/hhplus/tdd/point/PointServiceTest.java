@@ -1,17 +1,24 @@
 package io.hhplus.tdd.point;
 
 import io.hhplus.tdd.database.UserPointTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PointServiceTest {
 
+    private UserPointTable userPointTable;
+    private PointService pointService;
+
+    @BeforeEach
+    void setUp() {
+        userPointTable = new UserPointTable();
+        pointService = new PointService(userPointTable);
+    }
+
     @Test
     void 특정사용자에게_특정포인트를_충전() {
-        UserPointTable userPointTable = new UserPointTable();
-        PointService pointService = new PointService(userPointTable);
-
         UserPoint userPoint = pointService.charge(1L, 1000L);
 
         assertEquals(1L, userPoint.id());
@@ -20,9 +27,6 @@ class PointServiceTest {
 
     @Test
     void 이미_존재하는_특정_사용자에게_포인트를_충전() {
-        UserPointTable userPointTable = new UserPointTable();
-        PointService pointService = new PointService(userPointTable);
-
         // 2 번 유저는 500포인트를 가지고 있어서 1000 포인트 충전시 1500 포인트
         pointService.charge(2L, 500L);
         UserPoint userPoint = pointService.charge(2L, 1000L);
