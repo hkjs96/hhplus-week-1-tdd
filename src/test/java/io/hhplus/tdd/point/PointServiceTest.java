@@ -76,14 +76,45 @@ class PointServiceTest {
         // Then - 검증
         assertEquals(2L, userPoint2.id());
         assertEquals(1_500L, userPoint2.point()); // 2000 - 500 = 1500
+    }
 
-        // Given - 3 사용자는 없음.
-        // When - 포인트 사용
-        UserPoint userPoint3 = pointService.use(3L, 500L);
+    @Test
+    void 포인트가_부족한_경우_예외_발생() {
+        // Given - 사용자는 포인트가 없음 (0 포인트)
 
-        // Then - 검증
-        assertEquals(3L, userPoint3.id());
-        assertEquals(0L, userPoint3.point()); // 2000 - 500 = 1500
+        // When & Then - 포인트 사용 시 예외 발생
+        InsufficientPointException exception = assertThrows(
+            InsufficientPointException.class,
+            () -> pointService.use(3L, 500L)
+        );
+
+        assertTrue(exception.getMessage().contains("포인트가 부족합니다"));
+
+        // Given - 사용자에게 100 포인트 충전
+        pointService.charge(4L, 100L);
+
+        // When & Then - 500 포인트 사용 시도 시 예외 발생
+        InsufficientPointException exception2 = assertThrows(
+            InsufficientPointException.class,
+            () -> pointService.use(4L, 500L)
+        );
+
+        assertTrue(exception2.getMessage().contains("포인트가 부족합니다"));
+        assertTrue(exception2.getMessage().contains("100"));
+        assertTrue(exception2.getMessage().contains("500"));
+
+        // Given - 사용자에게 1000 포인트 충전
+        pointService.charge(5L, 1000L);
+
+        // When & Then - 2000 포인트 사용 시도 시 예외 발생
+        InsufficientPointException exception3 = assertThrows(
+            InsufficientPointException.class,
+            () -> pointService.use(5L, 2000L)
+        );
+
+        assertTrue(exception3.getMessage().contains("포인트가 부족합니다"));
+        assertTrue(exception3.getMessage().contains("1000"));
+        assertTrue(exception3.getMessage().contains("2000"));
     }
 
 }

@@ -27,6 +27,10 @@ public class PointService {
     UserPoint use(long id, long amount) {
         UserPoint userPoint = userPointRepository.selectById(id);
 
+        if (userPoint.point() < amount) {
+            throw new InsufficientPointException(userPoint.point(), amount);
+        }
+
         UserPoint updatedUserPoint = userPointRepository.insertOrUpdate(id, userPoint.point() - amount);
 
         return updatedUserPoint;
