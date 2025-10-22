@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PointServiceTest {
@@ -96,4 +98,31 @@ class PointServiceTest {
         assertTrue(exception.getMessage().contains(String.valueOf(useAmount)));
     }
 
+    @Test
+    void 특정사용자_포인트충전_및_사용내역조회() {
+        // Given - 사용자 1번이 다음과 같은 순서로 거래를 진행함:
+        //   1. 1000 포인트를 충전함
+        //   2. 300 포인트를 사용함
+        //   3. 500 포인트를 충전함
+
+        // When - 사용자 1번의 포인트 충전/사용 내역을 조회함
+
+        // Then - 조회된 내역이 존재해야 함 (null이 아님)
+        // And - 총 3개의 거래 내역이 존재해야 함
+
+        // And - 첫 번째 내역은 다음과 같아야 함:
+        //   - 사용자 ID: 1
+        //   - 금액: 1000
+        //   - 거래 타입: CHARGE (충전)
+
+        // And - 두 번째 내역은 다음과 같아야 함:
+        //   - 사용자 ID: 1
+        //   - 금액: 300
+        //   - 거래 타입: USE (사용)
+
+        // And - 세 번째 내역은 다음과 같아야 함:
+        //   - 사용자 ID: 1
+        //   - 금액: 500
+        //   - 거래 타입: CHARGE (충전)
+    }
 }
