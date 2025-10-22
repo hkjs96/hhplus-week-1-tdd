@@ -34,4 +34,12 @@ class PointServiceTest {
         assertEquals(2L, userPoint.id());
         assertEquals(1500L, userPoint.point());
     }
+
+    @Test
+    void 특정사용자_포인트_정보_조회() {
+        UserPoint userPoint = pointService.point(1L);
+
+        assertEquals(1L, userPoint.id());
+        assertEquals(2_000L, userPoint.point());
+    }
 }
