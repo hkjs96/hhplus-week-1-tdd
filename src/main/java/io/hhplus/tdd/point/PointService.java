@@ -22,6 +22,9 @@ public class PointService {
 
         userPoint = userPointRepository.insertOrUpdate(id, userPoint.point() + amount);
 
+        // 포인트 충전 내역 저장
+        pointHistoryRepository.insert(id, amount, TransactionType.CHARGE, System.currentTimeMillis());
+
         return userPoint;
     }
 
@@ -37,6 +40,9 @@ public class PointService {
         }
 
         UserPoint updatedUserPoint = userPointRepository.insertOrUpdate(id, userPoint.point() - amount);
+
+        // 포인트 사용 내역 저장
+        pointHistoryRepository.insert(id, amount, TransactionType.USE, System.currentTimeMillis());
 
         return updatedUserPoint;
     }
