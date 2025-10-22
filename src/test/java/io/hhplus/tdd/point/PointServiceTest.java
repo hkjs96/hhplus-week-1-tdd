@@ -24,22 +24,23 @@ class PointServiceTest {
         pointService = new PointService(userPointRepository, pointHistoryRepository);
     }
 
-    @Test
-    void 특정사용자에게_특정포인트를_충전() {
-        UserPoint userPoint = pointService.charge(1L, 1000L);
+    @ParameterizedTest
+    @CsvSource({
+            "1, 0, 1000, 1000",      // userId, 기존포인트, 충전포인트, 예상포인트
+            "2, 500, 1000, 1500"
+    })
+    void 특정사용자에게_특정포인트를_충전(long userId, long initialPoint, long chargeAmount, long expectedPoint) {
+        // Given - 기존 포인트가 있는 경우 먼저 충전
+        if (initialPoint > 0) {
+            pointService.charge(userId, initialPoint);
+        }
 
-        assertEquals(1L, userPoint.id());
-        assertEquals(1000L, userPoint.point());
-    }
+        // When - 포인트 충전
+        UserPoint userPoint = pointService.charge(userId, chargeAmount);
 
-    @Test
-    void 이미_존재하는_특정_사용자에게_포인트를_충전() {
-        // 2 번 유저는 500포인트를 가지고 있어서 1000 포인트 충전시 1500 포인트
-        pointService.charge(2L, 500L);
-        UserPoint userPoint = pointService.charge(2L, 1000L);
-
-        assertEquals(2L, userPoint.id());
-        assertEquals(1500L, userPoint.point());
+        // Then - 검증
+        assertEquals(userId, userPoint.id());
+        assertEquals(expectedPoint, userPoint.point());
     }
 
     @ParameterizedTest
@@ -116,22 +117,15 @@ class PointServiceTest {
         // And - 총 3개의 거래 내역이 존재해야 함
         assertEquals(3, pointHistories.size());
 
-        // And - 첫 번째 내역은 다음과 같아야 함:
-        PointHistory firstHistory = pointHistories.get(0);
-        assertEquals(1L, firstHistory.userId());      // 사용자 ID: 1
-        assertEquals(1000L, firstHistory.amount());   // 금액: 1000
-        assertEquals(TransactionType.CHARGE, firstHistory.type()); // 거래 타입: CHARGE (충전)
+        // And - 각 내역 검증
+        assertHistory(pointHistories.get(0), 1L, 1000L, TransactionType.CHARGE);
+        assertHistory(pointHistories.get(1), 1L, 300L, TransactionType.USE);
+        assertHistory(pointHistories.get(2), 1L, 500L, TransactionType.CHARGE);
+    }
 
-        // And - 두 번째 내역은 다음과 같아야 함:
-        PointHistory secondHistory = pointHistories.get(1);
-        assertEquals(1L, secondHistory.userId());     // 사용자 ID: 1
-        assertEquals(300L, secondHistory.amount());   // 금액: 300
-        assertEquals(TransactionType.USE, secondHistory.type());   // 거래 타입: USE (사용)
-
-        // And - 세 번째 내역은 다음과 같아야 함:
-        PointHistory thirdHistory = pointHistories.get(2);
-        assertEquals(1L, thirdHistory.userId());      // 사용자 ID: 1
-        assertEquals(500L, thirdHistory.amount());    // 금액: 500
-        assertEquals(TransactionType.CHARGE, thirdHistory.type()); // 거래 타입: CHARGE (충전)
+    private void assertHistory(PointHistory history, long expectedUserId, long expectedAmount, TransactionType expectedType) {
+        assertEquals(expectedUserId, history.userId());
+        assertEquals(expectedAmount, history.amount());
+        assertEquals(expectedType, history.type());
     }
 }
