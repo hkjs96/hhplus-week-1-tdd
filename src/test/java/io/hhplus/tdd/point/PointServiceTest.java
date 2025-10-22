@@ -101,28 +101,34 @@ class PointServiceTest {
     @Test
     void 특정사용자_포인트충전_및_사용내역조회() {
         // Given - 사용자 1번이 다음과 같은 순서로 거래를 진행함:
-        //   1. 1000 포인트를 충전함
-        //   2. 300 포인트를 사용함
-        //   3. 500 포인트를 충전함
+        pointService.charge(1L, 1000L);  // 1. 1000 포인트를 충전함
+        pointService.use(1L, 300L);      // 2. 300 포인트를 사용함
+        pointService.charge(1L, 500L);   // 3. 500 포인트를 충전함
 
         // When - 사용자 1번의 포인트 충전/사용 내역을 조회함
+        List<PointHistory> pointHistories = pointService.history(1L);
 
         // Then - 조회된 내역이 존재해야 함 (null이 아님)
+        assertNotNull(pointHistories);
         // And - 총 3개의 거래 내역이 존재해야 함
+        assertEquals(3, pointHistories.size());
 
         // And - 첫 번째 내역은 다음과 같아야 함:
-        //   - 사용자 ID: 1
-        //   - 금액: 1000
-        //   - 거래 타입: CHARGE (충전)
+        PointHistory firstHistory = pointHistories.get(0);
+        assertEquals(1L, firstHistory.userId());      // 사용자 ID: 1
+        assertEquals(1000L, firstHistory.amount());   // 금액: 1000
+        assertEquals(TransactionType.CHARGE, firstHistory.type()); // 거래 타입: CHARGE (충전)
 
         // And - 두 번째 내역은 다음과 같아야 함:
-        //   - 사용자 ID: 1
-        //   - 금액: 300
-        //   - 거래 타입: USE (사용)
+        PointHistory secondHistory = pointHistories.get(1);
+        assertEquals(1L, secondHistory.userId());     // 사용자 ID: 1
+        assertEquals(300L, secondHistory.amount());   // 금액: 300
+        assertEquals(TransactionType.USE, secondHistory.type());   // 거래 타입: USE (사용)
 
         // And - 세 번째 내역은 다음과 같아야 함:
-        //   - 사용자 ID: 1
-        //   - 금액: 500
-        //   - 거래 타입: CHARGE (충전)
+        PointHistory thirdHistory = pointHistories.get(2);
+        assertEquals(1L, thirdHistory.userId());      // 사용자 ID: 1
+        assertEquals(500L, thirdHistory.amount());    // 금액: 500
+        assertEquals(TransactionType.CHARGE, thirdHistory.type()); // 거래 타입: CHARGE (충전)
     }
 }
