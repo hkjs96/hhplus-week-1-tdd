@@ -1,5 +1,6 @@
 package io.hhplus.tdd.point;
 
+import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import org.springframework.stereotype.Service;
 
@@ -9,9 +10,11 @@ import java.util.List;
 public class PointService {
 
     private final UserPointTable userPointRepository;
+    private final PointHistoryTable pointHistoryRepository;
 
-    public PointService(UserPointTable userPointRepository) {
+    public PointService(UserPointTable userPointRepository, PointHistoryTable pointHistoryRepository) {
         this.userPointRepository = userPointRepository;
+        this.pointHistoryRepository = pointHistoryRepository;
     }
 
     UserPoint charge(long id,  long amount) {
