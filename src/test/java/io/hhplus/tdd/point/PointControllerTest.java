@@ -46,4 +46,12 @@ class PointControllerTest {
         assertEquals(expectedPoint, userPoint.point());
         verify(pointService).point(userId);
     }
+
+    @Test
+    void 특정사용자_포인트_사용() {
+        pointController.use(사용자_ID, 사용할_포인트);
+
+        assertEquals(기대값_ID, 사용자_ID);
+        assertEquals(기대값_남은_포인트, 남은_포인트);
+    }
 }
