@@ -70,9 +70,21 @@ class PointControllerTest {
     @Test
     void 포인트가_부족한_경우_예외_발생() {
         // Given - 사용자는 100 포인트를 가지고 있음
-        // When - 500 포인트를 사용하려고 시도
-        // Then - InsufficientPointException 예외가 발생해야 함
+        when(pointService.use(1L, 500L))
+                .thenThrow(new InsufficientPointException(100L, 500L));
+
+        // When & Then - 500 포인트를 사용하려고 시도하면 InsufficientPointException 예외가 발생해야 함
+        InsufficientPointException exception = assertThrows(
+                InsufficientPointException.class,
+                () -> pointController.use(1L, 500L)
+        );
+
         // And - 예외 메시지에 "포인트가 부족합니다"가 포함되어야 함
+        assertTrue(exception.getMessage().contains("포인트가 부족합니다"));
         // And - 예외 메시지에 현재 포인트(100)와 요청 포인트(500)가 포함되어야 함
+        assertTrue(exception.getMessage().contains("100"));
+        assertTrue(exception.getMessage().contains("500"));
+
+        verify(pointService).use(1L, 500L);
     }
 }
