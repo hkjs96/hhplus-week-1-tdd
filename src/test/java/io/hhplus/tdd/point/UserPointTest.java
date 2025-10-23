@@ -19,6 +19,6 @@ class UserPointTest {
     void 포인트는_양수() {
         UserPoint userPoint = new UserPoint(1L, 1_000L, System.currentTimeMillis());
 
-        assertThrows(포인트가_음수예요라는_에러, userPoint.charge(-500L));
+        assertThrows(InvalidPointAmountException.class, () -> userPoint.charge(-500L));
     }
 }
