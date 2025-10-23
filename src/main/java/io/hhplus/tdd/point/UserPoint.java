@@ -11,6 +11,11 @@ public record UserPoint(
     }
 
     public UserPoint charge(long amount) {
+
+        if(amount < 0) {
+            throw new InvalidPointAmountException(amount);
+        }
+
         return new UserPoint (this.id, this.point + amount, System.currentTimeMillis());
     }
 }
