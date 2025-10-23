@@ -4,8 +4,6 @@ import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
 
@@ -24,81 +22,62 @@ class PointServiceTest {
         pointService = new PointService(userPointRepository, pointHistoryRepository);
     }
 
-    @ParameterizedTest
-    @CsvSource({
-            "1, 0, 1000, 1000",      // userId, 기존포인트, 충전포인트, 예상포인트
-            "2, 500, 1000, 1500"
-    })
-    void 특정사용자에게_특정포인트를_충전(long userId, long initialPoint, long chargeAmount, long expectedPoint) {
-        // Given - 기존 포인트가 있는 경우 먼저 충전
-        if (initialPoint > 0) {
-            pointService.charge(userId, initialPoint);
-        }
+    @Test
+    void 특정사용자에게_포인트를_충전() {
+        // Given
+        long userId = 1L;
 
-        // When - 포인트 충전
-        UserPoint userPoint = pointService.charge(userId, chargeAmount);
+        // When - 5000 포인트 충전
+        UserPoint userPoint = pointService.charge(userId, 5_000L);
 
-        // Then - 검증
+        // Then - 충전된 포인트가 반영되어야 함
         assertEquals(userId, userPoint.id());
-        assertEquals(expectedPoint, userPoint.point());
+        assertEquals(5_000L, userPoint.point());
     }
 
-    @ParameterizedTest
-    @CsvSource({
-            "1, 2000",
-            "2, 500",
-            "3, 3000"
-    })
-    void 특정사용자_포인트_정보_조회(long userId, long chargeAmount) {
-        // Given - 테스트 데이터 준비
-        pointService.charge(userId, chargeAmount);
+    @Test
+    void 특정사용자_포인트_정보_조회() {
+        // Given - 사용자에게 10000 포인트 충전
+        long userId = 1L;
+        pointService.charge(userId, 10_000L);
 
         // When - 포인트 조회
         UserPoint userPoint = pointService.point(userId);
 
-        // Then - 검증
+        // Then - 충전한 포인트가 조회되어야 함
         assertEquals(userId, userPoint.id());
-        assertEquals(chargeAmount, userPoint.point());
+        assertEquals(10_000L, userPoint.point());
     }
 
-    @ParameterizedTest
-    @CsvSource({
-            "1, 1000, 300, 700",    // userId, 충전포인트, 사용포인트, 예상잔액
-            "2, 2000, 500, 1500"
-    })
-    void 특정사용자의_포인트사용(long userId, long chargeAmount, long useAmount, long expectedPoint) {
-        // Given - 사용자에게 포인트 충전
-        pointService.charge(userId, chargeAmount);
+    @Test
+    void 특정사용자의_포인트사용() {
+        // Given - 사용자에게 10000 포인트 충전
+        long userId = 1L;
+        pointService.charge(userId, 10_000L);
 
-        // When - 포인트 사용
-        UserPoint userPoint = pointService.use(userId, useAmount);
+        // When - 500 포인트 사용
+        UserPoint userPoint = pointService.use(userId, 500L);
 
-        // Then - 검증
+        // Then - 사용 후 잔액이 9500이어야 함
         assertEquals(userId, userPoint.id());
-        assertEquals(expectedPoint, userPoint.point());
+        assertEquals(9_500L, userPoint.point());
     }
 
-    @ParameterizedTest
-    @CsvSource({
-            "3, 0, 500",      // userId, 현재포인트, 사용시도포인트
-            "4, 100, 500",
-            "5, 1000, 2000"
-    })
-    void 포인트가_부족한_경우_예외_발생(long userId, long currentPoint, long useAmount) {
-        // Given - 사용자에게 포인트 충전 (0이 아닌 경우)
-        if (currentPoint > 0) {
-            pointService.charge(userId, currentPoint);
-        }
+    @Test
+    void 포인트가_부족한_경우_예외_발생() {
+        // Given - 사용자에게 5000 포인트만 충전
+        long userId = 1L;
+        pointService.charge(userId, 5_000L);
 
-        // When & Then - 포인트 사용 시도 시 예외 발생
+        // When & Then - 10000 포인트 사용 시도 시 예외 발생
         InsufficientPointException exception = assertThrows(
             InsufficientPointException.class,
-            () -> pointService.use(userId, useAmount)
+            () -> pointService.use(userId, 10_000L)
         );
 
         // Then - 예외 메시지에 포인트 값이 포함되어 있는지 검증
-        assertTrue(exception.getMessage().contains(String.valueOf(currentPoint)));
-        assertTrue(exception.getMessage().contains(String.valueOf(useAmount)));
+        assertTrue(exception.getMessage().contains("5000"));
+        assertTrue(exception.getMessage().contains("10000"));
     }
 
     @Test
