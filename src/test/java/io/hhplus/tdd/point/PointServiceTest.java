@@ -24,55 +24,49 @@ class PointServiceTest {
 
     @Test
     void 특정사용자에게_포인트를_충전() {
-        // Given
-        long userId = 1L;
-
         // When - 5000 포인트 충전
-        UserPoint userPoint = pointService.charge(userId, 5_000L);
+        UserPoint userPoint = pointService.charge(1L, 5_000L);
 
         // Then - 충전된 포인트가 반영되어야 함
-        assertEquals(userId, userPoint.id());
+        assertEquals(1L, userPoint.id());
         assertEquals(5_000L, userPoint.point());
     }
 
     @Test
     void 특정사용자_포인트_정보_조회() {
         // Given - 사용자에게 10000 포인트 충전
-        long userId = 1L;
-        pointService.charge(userId, 10_000L);
+        pointService.charge(1L, 10_000L);
 
         // When - 포인트 조회
-        UserPoint userPoint = pointService.point(userId);
+        UserPoint userPoint = pointService.point(1L);
 
         // Then - 충전한 포인트가 조회되어야 함
-        assertEquals(userId, userPoint.id());
+        assertEquals(1L, userPoint.id());
         assertEquals(10_000L, userPoint.point());
     }
 
     @Test
     void 특정사용자의_포인트사용() {
         // Given - 사용자에게 10000 포인트 충전
-        long userId = 1L;
-        pointService.charge(userId, 10_000L);
+        pointService.charge(1L, 10_000L);
 
         // When - 500 포인트 사용
-        UserPoint userPoint = pointService.use(userId, 500L);
+        UserPoint userPoint = pointService.use(1L, 500L);
 
         // Then - 사용 후 잔액이 9500이어야 함
-        assertEquals(userId, userPoint.id());
+        assertEquals(1L, userPoint.id());
         assertEquals(9_500L, userPoint.point());
     }
 
     @Test
     void 포인트가_부족한_경우_예외_발생() {
         // Given - 사용자에게 5000 포인트만 충전
-        long userId = 1L;
-        pointService.charge(userId, 5_000L);
+        pointService.charge(1L, 5_000L);
 
         // When & Then - 10000 포인트 사용 시도 시 예외 발생
         InsufficientPointException exception = assertThrows(
             InsufficientPointException.class,
-            () -> pointService.use(userId, 10_000L)
+            () -> pointService.use(1L, 10_000L)
         );
 
         // Then - 예외 메시지에 포인트 값이 포함되어 있는지 검증
