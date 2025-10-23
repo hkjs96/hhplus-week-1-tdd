@@ -104,9 +104,9 @@ class PointServiceTest {
     @Test
     void 특정사용자_포인트충전_및_사용내역조회() {
         // Given - 사용자 1번이 다음과 같은 순서로 거래를 진행함:
-        pointService.charge(1L, 1000L);  // 1. 1000 포인트를 충전함
-        pointService.use(1L, 300L);      // 2. 300 포인트를 사용함
-        pointService.charge(1L, 500L);   // 3. 500 포인트를 충전함
+        pointService.charge(1L, 5_000L);  // 1. 5000 포인트를 충전함
+        pointService.use(1L, 500L);       // 2. 500 포인트를 사용함
+        pointService.charge(1L, 5_000L);  // 3. 5000 포인트를 충전함
 
         // When - 사용자 1번의 포인트 충전/사용 내역을 조회함
         List<PointHistory> pointHistories = pointService.history(1L);
@@ -117,9 +117,34 @@ class PointServiceTest {
         assertEquals(3, pointHistories.size());
 
         // And - 각 내역 검증
-        assertHistory(pointHistories.get(0), 1L, 1000L, TransactionType.CHARGE);
-        assertHistory(pointHistories.get(1), 1L, 300L, TransactionType.USE);
-        assertHistory(pointHistories.get(2), 1L, 500L, TransactionType.CHARGE);
+        assertHistory(pointHistories.get(0), 1L, 5_000L, TransactionType.CHARGE);
+        assertHistory(pointHistories.get(1), 1L, 500L, TransactionType.USE);
+        assertHistory(pointHistories.get(2), 1L, 5_000L, TransactionType.CHARGE);
+    }
+
+    @Test
+    void 포인트_내역_조회는_최근_5건만_반환() {
+        // Given - 사용자 1번이 7건의 거래를 진행함
+        pointService.charge(1L, 5_000L);   // 1번째 거래
+        pointService.use(1L, 500L);        // 2번째 거래
+        pointService.charge(1L, 5_000L);   // 3번째 거래
+        pointService.use(1L, 1_000L);      // 4번째 거래
+        pointService.charge(1L, 5_000L);   // 5번째 거래
+        pointService.use(1L, 500L);        // 6번째 거래
+        pointService.charge(1L, 5_000L);   // 7번째 거래
+
+        // When - 사용자 1번의 포인트 내역을 조회함
+        List<PointHistory> pointHistories = pointService.history(1L);
+
+        // Then - 조회된 내역은 최근 5건만 반환되어야 함
+        assertEquals(5, pointHistories.size());
+
+        // And - 최근 5건만 포함되어야 함 (3번째부터 7번째 거래)
+        assertHistory(pointHistories.get(0), 1L, 5_000L, TransactionType.CHARGE);  // 3번째
+        assertHistory(pointHistories.get(1), 1L, 1_000L, TransactionType.USE);     // 4번째
+        assertHistory(pointHistories.get(2), 1L, 5_000L, TransactionType.CHARGE);  // 5번째
+        assertHistory(pointHistories.get(3), 1L, 500L, TransactionType.USE);       // 6번째
+        assertHistory(pointHistories.get(4), 1L, 5_000L, TransactionType.CHARGE);  // 7번째
     }
 
     private void assertHistory(PointHistory history, long expectedUserId, long expectedAmount, TransactionType expectedType) {
