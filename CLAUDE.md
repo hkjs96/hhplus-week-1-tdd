@@ -164,6 +164,57 @@ This project includes helpful slash commands in `.claude/commands/`:
 - `/api-test` - Test all API endpoints from point-api.http
 - `/coverage` - Generate and analyze code coverage report
 
+### Creating HTTP Request Files
+
+This project uses `.http` files (IntelliJ HTTP Client format) for manual API testing. The existing `point-api.http` file demonstrates the format.
+
+**When to create `.http` files:**
+- When implementing new REST API endpoints
+- For manual testing during development
+- To document API usage examples
+- To validate request/response formats
+
+**Format:**
+```http
+### Description of the request
+METHOD http://localhost:8080/endpoint
+Content-Type: application/json
+
+request-body
+
+### Next request
+```
+
+**Example (from point-api.http):**
+```http
+### 포인트 충전
+PATCH http://localhost:8080/point/1/charge
+Content-Type: application/json
+
+5000
+
+### 포인트 조회
+GET http://localhost:8080/point/1
+
+### 포인트 사용
+PATCH http://localhost:8080/point/1/use
+Content-Type: application/json
+
+1300
+```
+
+**Best Practices:**
+- Use `###` comments to describe each request
+- Include both success and failure cases
+- Test edge cases (잘못된 단위, 잔액 부족, etc.)
+- Group related requests together
+- Use meaningful userId values for testing
+
+**Testing with `.http` files:**
+1. In IntelliJ IDEA, click the green arrow next to each request
+2. Or use the custom command: `/api-test` to test all endpoints
+3. Ensure the application is running: `./gradlew bootRun`
+
 ### Important Constraints
 
 - **DO NOT modify** `UserPointTable` or `PointHistoryTable` classes
