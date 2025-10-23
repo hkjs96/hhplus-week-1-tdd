@@ -21,4 +21,13 @@ class UserPointTest {
 
         assertThrows(InvalidPointAmountException.class, () -> userPoint.charge(-500L));
     }
+
+    @Test
+    void 포인트는_5000원_단위로_충전() {
+        UserPoint userPoint = new UserPoint(1L, 1_000L, System.currentTimeMillis());
+
+        assertThrows(InvalidChargeUnitException.class, () -> userPoint.charge(3_000L));
+        assertThrows(InvalidChargeUnitException.class, () -> userPoint.charge(7_500L));
+        assertThrows(InvalidChargeUnitException.class, () -> userPoint.charge(1_000L));
+    }
 }
