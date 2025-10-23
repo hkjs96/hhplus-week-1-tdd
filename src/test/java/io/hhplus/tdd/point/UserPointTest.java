@@ -8,11 +8,11 @@ class UserPointTest {
 
     @Test
     void 포인트_충전() {
-        UserPoint userPoint = new UserPoint(1L, 1_000L, System.currentTimeMillis());
+        UserPoint userPoint = new UserPoint(1L, 10_000L, System.currentTimeMillis());
 
-        UserPoint updateUserPoint = userPoint.charge(500L);
+        UserPoint updateUserPoint = userPoint.charge(5_000L);
 
-        assertEquals(1_500L, updateUserPoint.point());
+        assertEquals(15_000L, updateUserPoint.point());
     }
 
     @Test
@@ -29,5 +29,12 @@ class UserPointTest {
         assertThrows(InvalidChargeUnitException.class, () -> userPoint.charge(3_000L));
         assertThrows(InvalidChargeUnitException.class, () -> userPoint.charge(7_500L));
         assertThrows(InvalidChargeUnitException.class, () -> userPoint.charge(1_000L));
+    }
+
+    @Test
+    void 포인트_보유량은_100000_포인트를_초과할_수_없음() {
+        UserPoint userPoint = new UserPoint(1L, 95_000L, System.currentTimeMillis());
+
+        assertThrows(MaxPointExceededException.class, () -> userPoint.charge(10_000L));
     }
 }
