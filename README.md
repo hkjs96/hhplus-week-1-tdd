@@ -183,21 +183,35 @@ try {
 ### 테스트 구조
 
 #### 1. **단위 테스트 (Unit Test)**
-- `UserPointTest`: 도메인 모델 비즈니스 규칙 검증
-- `PointServiceTest`: 서비스 레이어 로직 검증
-- `PointControllerTest`: API 엔드포인트 검증
+- `UserPointTest`: 도메인 모델 비즈니스 규칙 검증 (7개 테스트)
+- `PointServiceTest`: 서비스 레이어 로직 검증 (6개 테스트)
+- `PointServiceMockTest`: Mock/Stub을 활용한 서비스 격리 테스트 (8개 테스트)
+- `PointControllerTest`: API 엔드포인트 검증 (5개 테스트)
 
 #### 2. **통합 테스트 (Integration Test)**
-- `PointIntegrationTest`: 전체 레이어 통합 검증
+- `PointIntegrationTest`: 전체 레이어 통합 검증 (7개 테스트)
+  - 기본 흐름: 충전, 사용, 조회
+  - 예외 처리: 잘못된 단위, 잔액 부족
+  - 경계 조건: 최대 잔액, 최소 사용 금액, 내역 5건 제한
 - Spring Context 로드
 - MockMvc를 사용한 API 테스트
 
 #### 3. **동시성 테스트 (Concurrency Test)**
-- `PointConcurrencyTest`: Race Condition 검증
+- `PointConcurrencyTest`: Race Condition 검증 (6개 테스트)
+  - 동시 충전/사용 기본 시나리오
+  - 충전과 사용 혼합 시나리오
+  - 서로 다른 사용자 독립적인 Lock 검증
+  - 최대 잔액 초과 동시 시도 (부분 성공/실패)
+  - 잔액 부족 상황 동시 사용 (부분 성공/실패)
 - `ExecutorService`와 `CountDownLatch` 사용
 - 여러 스레드 동시 실행 시나리오
 
-### 테스트 커버리지
+### 테스트 통계
+
+**총 테스트**: 39개 (100% 성공)
+- 단위 테스트: 26개
+- 통합 테스트: 7개
+- 동시성 테스트: 6개
 
 **전체 커버리지**: 94%
 - **라인 커버리지**: 94%
