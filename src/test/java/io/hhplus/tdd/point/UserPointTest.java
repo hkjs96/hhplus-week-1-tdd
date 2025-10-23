@@ -54,4 +54,12 @@ class UserPointTest {
         assertThrows(MinimumUseAmountException.class, () -> userPoint.use(400L));
         assertThrows(MinimumUseAmountException.class, () -> userPoint.use(100L));
     }
+
+    @Test
+    void 포인트_사용_금액은_양수() {
+        UserPoint userPoint = new UserPoint(1L, 10_000L, System.currentTimeMillis());
+
+        assertThrows(InvalidPointAmountException.class, () -> userPoint.use(-500L));
+        assertThrows(InvalidPointAmountException.class, () -> userPoint.use(0L));
+    }
 }
