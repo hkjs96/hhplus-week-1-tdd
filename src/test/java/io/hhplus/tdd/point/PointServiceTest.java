@@ -50,12 +50,12 @@ class PointServiceTest {
         // Given - 사용자에게 10000 포인트 충전
         pointService.charge(1L, 10_000L);
 
-        // When - 500 포인트 사용
-        UserPoint userPoint = pointService.use(1L, 500L);
+        // When - 1300 포인트 사용
+        UserPoint userPoint = pointService.use(1L, 1_300L);
 
-        // Then - 사용 후 잔액이 9500이어야 함
+        // Then - 사용 후 잔액이 8700이어야 함
         assertEquals(1L, userPoint.id());
-        assertEquals(9_500L, userPoint.point());
+        assertEquals(8_700L, userPoint.point());
     }
 
     @Test
@@ -78,7 +78,7 @@ class PointServiceTest {
     void 특정사용자_포인트충전_및_사용내역조회() {
         // Given - 사용자 1번이 다음과 같은 순서로 거래를 진행함:
         pointService.charge(1L, 5_000L);  // 1. 5000 포인트를 충전함
-        pointService.use(1L, 500L);       // 2. 500 포인트를 사용함
+        pointService.use(1L, 1_200L);     // 2. 1200 포인트를 사용함
         pointService.charge(1L, 5_000L);  // 3. 5000 포인트를 충전함
 
         // When - 사용자 1번의 포인트 충전/사용 내역을 조회함
@@ -91,7 +91,7 @@ class PointServiceTest {
 
         // And - 각 내역 검증
         assertHistory(pointHistories.get(0), 1L, 5_000L, TransactionType.CHARGE);
-        assertHistory(pointHistories.get(1), 1L, 500L, TransactionType.USE);
+        assertHistory(pointHistories.get(1), 1L, 1_200L, TransactionType.USE);
         assertHistory(pointHistories.get(2), 1L, 5_000L, TransactionType.CHARGE);
     }
 
@@ -99,11 +99,11 @@ class PointServiceTest {
     void 포인트_내역_조회는_최근_5건만_반환() {
         // Given - 사용자 1번이 7건의 거래를 진행함
         pointService.charge(1L, 5_000L);   // 1번째 거래
-        pointService.use(1L, 500L);        // 2번째 거래
+        pointService.use(1L, 700L);        // 2번째 거래
         pointService.charge(1L, 5_000L);   // 3번째 거래
-        pointService.use(1L, 1_000L);      // 4번째 거래
+        pointService.use(1L, 1_800L);      // 4번째 거래
         pointService.charge(1L, 5_000L);   // 5번째 거래
-        pointService.use(1L, 500L);        // 6번째 거래
+        pointService.use(1L, 2_300L);      // 6번째 거래
         pointService.charge(1L, 5_000L);   // 7번째 거래
 
         // When - 사용자 1번의 포인트 내역을 조회함
@@ -114,9 +114,9 @@ class PointServiceTest {
 
         // And - 최근 5건만 포함되어야 함 (3번째부터 7번째 거래)
         assertHistory(pointHistories.get(0), 1L, 5_000L, TransactionType.CHARGE);  // 3번째
-        assertHistory(pointHistories.get(1), 1L, 1_000L, TransactionType.USE);     // 4번째
+        assertHistory(pointHistories.get(1), 1L, 1_800L, TransactionType.USE);     // 4번째
         assertHistory(pointHistories.get(2), 1L, 5_000L, TransactionType.CHARGE);  // 5번째
-        assertHistory(pointHistories.get(3), 1L, 500L, TransactionType.USE);       // 6번째
+        assertHistory(pointHistories.get(3), 1L, 2_300L, TransactionType.USE);     // 6번째
         assertHistory(pointHistories.get(4), 1L, 5_000L, TransactionType.CHARGE);  // 7번째
     }
 
