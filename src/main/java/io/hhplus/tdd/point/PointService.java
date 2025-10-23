@@ -48,6 +48,15 @@ public class PointService {
     }
 
     List<PointHistory> history(long id) {
-        return pointHistoryRepository.selectAllByUserId(id);
+        List<PointHistory> allHistories = pointHistoryRepository.selectAllByUserId(id);
+
+        // 최근 5건만 반환
+        int size = allHistories.size();
+        if (size <= 5) {
+            return allHistories;
+        }
+
+        // 마지막 5건 반환
+        return allHistories.subList(size - 5, size);
     }
 }
