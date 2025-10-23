@@ -20,12 +20,16 @@ public class PointService {
     UserPoint charge(long id,  long amount) {
         UserPoint userPoint = userPointRepository.selectById(id);
 
-        userPoint = userPointRepository.insertOrUpdate(id, userPoint.point() + amount);
+        // UserPoint 도메인 객체의 charge 메서드를 사용하여 비즈니스 로직 수행
+        UserPoint chargedUserPoint = userPoint.charge(amount);
+
+        // 업데이트된 포인트 저장
+        UserPoint savedUserPoint = userPointRepository.insertOrUpdate(id, chargedUserPoint.point());
 
         // 포인트 충전 내역 저장
         pointHistoryRepository.insert(id, amount, TransactionType.CHARGE, System.currentTimeMillis());
 
-        return userPoint;
+        return savedUserPoint;
     }
 
     UserPoint point(long id) {
@@ -35,16 +39,16 @@ public class PointService {
     UserPoint use(long id, long amount) {
         UserPoint userPoint = userPointRepository.selectById(id);
 
-        if (userPoint.point() < amount) {
-            throw new InsufficientPointException(userPoint.point(), amount);
-        }
+        // UserPoint 도메인 객체의 use 메서드를 사용하여 비즈니스 로직 수행
+        UserPoint usedUserPoint = userPoint.use(amount);
 
-        UserPoint updatedUserPoint = userPointRepository.insertOrUpdate(id, userPoint.point() - amount);
+        // 업데이트된 포인트 저장
+        UserPoint savedUserPoint = userPointRepository.insertOrUpdate(id, usedUserPoint.point());
 
         // 포인트 사용 내역 저장
         pointHistoryRepository.insert(id, amount, TransactionType.USE, System.currentTimeMillis());
 
-        return updatedUserPoint;
+        return savedUserPoint;
     }
 
     List<PointHistory> history(long id) {
