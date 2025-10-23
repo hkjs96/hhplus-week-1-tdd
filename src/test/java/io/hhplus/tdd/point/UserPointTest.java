@@ -37,4 +37,21 @@ class UserPointTest {
 
         assertThrows(MaxPointExceededException.class, () -> userPoint.charge(10_000L));
     }
+
+    @Test
+    void 포인트는_100_단위로_사용_가능() {
+        UserPoint userPoint = new UserPoint(1L, 10_000L, System.currentTimeMillis());
+
+        assertThrows(InvalidUseUnitException.class, () -> userPoint.use(150L));
+        assertThrows(InvalidUseUnitException.class, () -> userPoint.use(555L));
+        assertThrows(InvalidUseUnitException.class, () -> userPoint.use(1_250L));
+    }
+
+    @Test
+    void 포인트는_최소_500_포인트부터_사용_가능() {
+        UserPoint userPoint = new UserPoint(1L, 10_000L, System.currentTimeMillis());
+
+        assertThrows(MinimumUseAmountException.class, () -> userPoint.use(400L));
+        assertThrows(MinimumUseAmountException.class, () -> userPoint.use(100L));
+    }
 }
