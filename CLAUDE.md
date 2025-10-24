@@ -215,6 +215,55 @@ Content-Type: application/json
 2. Or use the custom command: `/api-test` to test all endpoints
 3. Ensure the application is running: `./gradlew bootRun`
 
+### Maintaining PR Documentation
+
+This project maintains PR documentation files (e.g., `PR_STEP1.md`, `PR_STEP2.md`) to track development progress and commits.
+
+**When to update PR documentation:**
+- After completing significant refactoring work
+- After implementing new features or fixing bugs
+- After completing TDD cycles (Red-Green-Refactor)
+- When adding new commits that contribute to the PR's scope
+
+**What to include in PR documentation updates:**
+- **Commit hash and link**: Use the format `[commit-hash](github-url)` for traceability
+- **Brief description**: One-line summary of what the commit does
+- **Detailed notes** (for major changes):
+  - Key changes made (e.g., constants extracted, methods refactored)
+  - Improvements achieved (e.g., code reduction, readability enhancement)
+  - Patterns applied (e.g., DRY principle, functional programming)
+
+**Structure of PR documentation:**
+```markdown
+#### Section Name (e.g., 리팩토링 및 테스트 확대)
+- Brief commit description: [`hash`](url)
+  - Detailed change 1
+  - Detailed change 2
+  - Impact or improvement
+```
+
+**Example:**
+```markdown
+#### 리팩토링 및 테스트 확대 (REFACTOR)
+- PointService 중복 코드 제거 및 매직 넘버 추출: [`bae14db`](https://github.com/.../commit/bae14db)
+  - 매직 넘버 5를 MAX_HISTORY_SIZE 상수로 추출
+  - 중복된 락 패턴을 executePointTransaction 메서드로 통합
+  - charge()와 use() 메서드를 각각 20줄에서 1줄로 간소화
+  - Function<UserPoint, UserPoint>를 활용한 함수형 프로그래밍 적용
+```
+
+**Best Practices:**
+- Update PR documentation immediately after completing related commits
+- Group related commits under appropriate section headers
+- Use clear, descriptive language that explains the "why" not just the "what"
+- Include metrics when applicable (e.g., "87줄 → 82줄", "20줄 → 1줄")
+- Align section names with TDD phases (RED, GREEN, REFACTOR) when relevant
+
+**Important:**
+- Always update CLAUDE.md when establishing new documentation patterns
+- This ensures Claude Code can maintain consistency in future PR documentation updates
+- Keep PR documentation in sync with actual commits to maintain project traceability
+
 ### Important Constraints
 
 - **DO NOT modify** `UserPointTable` or `PointHistoryTable` classes

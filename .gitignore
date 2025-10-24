@@ -40,3 +40,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Personal Documentation ###
+PR_STEP*.md
+TDD_WEEK1_SUMMARY*.md
+*.http
